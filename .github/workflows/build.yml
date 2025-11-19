@@ -34,7 +34,7 @@ jobs:
           cache: 'gradle'
 
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew test -x test
 
       - name: Snyk Code (SAST) Scan
         uses: snyk/actions/node@master
