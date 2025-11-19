@@ -52,6 +52,9 @@ jobs:
         run: snyk test --all-projects --sarif-file-output=snyk-sca-report.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: Build JAR
+        run: ./gradlew bootJar
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
