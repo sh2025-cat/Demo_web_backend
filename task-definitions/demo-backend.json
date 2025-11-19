@@ -1,9 +1,7 @@
 {
   "family": "cat-demo-backend",
   "networkMode": "awsvpc",
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::277679348386:role/cat-demo-cluster-task-execution-role",
@@ -13,26 +11,34 @@
       "name": "backend",
       "image": "277679348386.dkr.ecr.ap-northeast-2.amazonaws.com/cat-demo-backend:latest",
       "essential": true,
-      "cpu": 0,
-      "environment": [],
-      "command": [
-        "-text=Hello from Cat Demo Backend API"
-      ],
-      "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "wget -q --spider http://localhost:5678/ || exit 1"
-        ],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 30
-      },
       "portMappings": [
         {
-          "containerPort": 5678,
-          "hostPort": 5678,
+          "containerPort": 8080,
           "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "ENV",
+          "value": "production"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "cat-mysql.c7c64cakmi8h.ap-northeast-2.rds.amazonaws.com"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "catdb"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DB_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:277679348386:secret:cat/db/password"
         }
       ],
       "logConfiguration": {
@@ -40,14 +46,17 @@
         "options": {
           "awslogs-group": "/ecs/cat-demo-backend",
           "awslogs-region": "ap-northeast-2",
-          "awslogs-stream-prefix": "backend"
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
         }
       },
-      "mountPoints": [],
-      "volumesFrom": [],
-      "systemControls": []
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
     }
-  ],
-  "volumes": [],
-  "placementConstraints": []
+  ]
 }
