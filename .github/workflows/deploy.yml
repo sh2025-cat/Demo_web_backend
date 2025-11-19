@@ -1,12 +1,10 @@
 name: Cat-Backend Deploy
 
 on:
-  workflow_dispatch:
-    inputs:
-      image_tag:
-        description: "배포할 Docker 이미지 태그(필수)"
-        type: string
-        required: true
+  workflow_run:
+    workflows: ["Cat-Backend Build"]
+    types:
+      - completed
 
 permissions:
   contents: read
