@@ -9,6 +9,7 @@ on:
         default: ""
 
 permissions:
+  actions: read
   security-events: write
   contents: read
 
