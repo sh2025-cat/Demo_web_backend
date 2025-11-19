@@ -53,11 +53,6 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Upload SARIF file to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: snyk-code-report.sarif
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
