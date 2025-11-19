@@ -1,0 +1,71 @@
+name: Cat-Backend Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "배포할 Docker 이미지 태그(필수)"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  security-events: write
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: cat-demo-backend
+  ECS_CLUSTER_NAME: cat-demo-cluster
+  ECS_SERVICE_NAME: cat-demo-backend-service
+  TASK_DEFINITION_PATH: task-definitions/backend-task-definition.json
+  IMAGE_TAG: ${{ github.sha }}
+  CONTAINER_NAME: backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ECS 태스크 정의 업데이트 (Deploy)
+      - name: Fill in the new image ID in the ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.TASK_DEFINITION_PATH }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ inputs.image_tag }}
+
+      # ECS 서비스 업데이트 및 배포
+      - name: Deploy to ECS service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
+
+      # Deployment Summary 출력
+      - name: Deployment Summary
+        run: |
+          echo "## 🚀 ECS Backend Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cluster**: ${{ env.ECS_CLUSTER_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service**: ${{ env.ECS_SERVICE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Container**: ${{ env.CONTAINER_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Domain**: https://api-board.go-to-learn.net" >> $GITHUB_STEP_SUMMARY
