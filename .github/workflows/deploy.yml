@@ -46,7 +46,7 @@ jobs:
         with:
           task-definition: ${{ env.TASK_DEFINITION_PATH }}
           container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ inputs.image_tag }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.event.workflow_run.outputs.image_tag }}
 
       # ECS 서비스 업데이트 및 배포
       - name: Deploy to ECS service
@@ -65,5 +65,5 @@ jobs:
           echo "- **Cluster**: ${{ env.ECS_CLUSTER_NAME }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Service**: ${{ env.ECS_SERVICE_NAME }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Container**: ${{ env.CONTAINER_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Image**: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.event.workflow_run.outputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Domain**: https://api-board.go-to-learn.net" >> $GITHUB_STEP_SUMMARY
