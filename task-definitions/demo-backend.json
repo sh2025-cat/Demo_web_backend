@@ -35,12 +35,6 @@
           "value": "catdb"
         }
       ],
-      "secrets": [
-        {
-          "name": "DB_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:277679348386:secret:cat/db/password"
-        }
-      ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
