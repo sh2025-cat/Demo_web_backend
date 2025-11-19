@@ -15,7 +15,7 @@ env:
   ECR_REPOSITORY: cat-demo-backend
   ECS_CLUSTER_NAME: cat-demo-cluster
   ECS_SERVICE_NAME: cat-demo-backend-service
-  TASK_DEFINITION_PATH: task-definitions/backend-task-definition.json
+  TASK_DEFINITION_PATH: task-definitions/demo-backend.json
   IMAGE_TAG: ${{ github.sha }}
   CONTAINER_NAME: backend
 
