@@ -38,7 +38,7 @@ jobs:
           cache: 'gradle'
 
       - name: Run Unit Tests
-        run: ./gradlew test -x test
+        run: ./gradlew test
 
       - name: Snyk Code (SAST) Scan
         uses: snyk/actions/node@master
@@ -108,13 +108,17 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+      
+      - name: Get commit message
+        id: commit
+        run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
       - name: Send webhook with github-script
         uses: actions/github-script@v7
         env:
           SERVICE_NAME: ${{ github.event.repository.name }}
-          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          IMAGE_TAG: ${{ steps.build-image.outputs.image_tag }}
+          COMMIT_MESSAGE: ${{ steps.commit.outputs.message }}
           COMMIT_HASH: ${{ github.sha }}
           CICD_WEBHOOK: ${{ env.CICD_WEBHOOK }}
         with:
