@@ -119,8 +119,6 @@ jobs:
           CICD_WEBHOOK: ${{ env.CICD_WEBHOOK }}
         with:
           script: |
-            const fetch = require("node-fetch");
-
             const body = {
               serviceName: process.env.SERVICE_NAME,
               imageTag: process.env.IMAGE_TAG,
