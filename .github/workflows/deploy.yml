@@ -44,7 +44,7 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: code test
-          args: --sarif-file-output=snyk-code-report.sarif
+          args: --sarif-file-output=snyk-code-report.sarif --fail-on=medium
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
