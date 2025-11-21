@@ -16,9 +16,6 @@ permissions:
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: cat-demo-backend
-  ECS_CLUSTER_NAME: cat-demo-cluster
-  ECS_SERVICE_NAME: cat-demo-backend-service
-  IMAGE_TAG: ${{ github.sha.substr(0, 7) }}
   CICD_WEBHOOK: ${{ secrets.CICD_WEBHOOK }}
 
 jobs:
@@ -96,7 +93,7 @@ jobs:
         run: |
           IMAGE_TAG="${{ github.event.inputs.image_tag }}"
           if [ -z "$IMAGE_TAG" ]; then
-            IMAGE_TAG="${GITHUB_SHA}"
+            IMAGE_TAG="${GITHUB_SHA::7}"
           fi
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
