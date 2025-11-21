@@ -18,7 +18,7 @@ env:
   ECR_REPOSITORY: cat-demo-backend
   ECS_CLUSTER_NAME: cat-demo-cluster
   ECS_SERVICE_NAME: cat-demo-backend-service
-  IMAGE_TAG: ${{ github.sha }}
+  IMAGE_TAG: ${{ github.sha.substr(0, 7) }}
   CICD_WEBHOOK: ${{ secrets.CICD_WEBHOOK }}
 
 jobs:
