@@ -10,10 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/health")
 public class HealthController {
 
-    @GetMapping
+    @GetMapping("/")
+    public ResponseEntity<Map<String, Object>> rootHealthCheck() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("timestamp", LocalDateTime.now());
+        response.put("service", "cat-board-be");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/api/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "UP");
