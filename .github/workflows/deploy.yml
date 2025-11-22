@@ -1,6 +1,12 @@
 name: Cat-Backend Build 
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       image_tag:
